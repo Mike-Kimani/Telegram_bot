@@ -20,7 +20,7 @@ UniversalTelegramBot bot(BOTtoken, client);
   //Serial.println("LIGHTS DETECTED!!!");
   //lightsDetected = true;
 //}
-
+int i;
 void getSensorReadings(){
   resistance = analogRead(A0);
   resistance = map(resistance, 0, 1023, 0, 255);
@@ -46,21 +46,34 @@ void setup() {
   Serial.println("WiFi connected");
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
-
+  getSensorReadings();
   bot.sendMessage(CHAT_ID, "Bot started up", "");
-
   
+  if (resistance> 15.00){
+   bot.sendMessage(CHAT_ID, "Lights on!!", "");
+   i =1;
+    }
+    else{
+      bot.sendMessage(CHAT_ID, "Lights out!!", "");
+      i =2;      
+      }
+  Serial.print(i);
 
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
   getSensorReadings();
-  if (resistance> 15.00){
-    bot.sendMessage(CHAT_ID, "Lights on!!", "");
+  
+  if ((resistance> 15.00) && i ==2){
+   bot.sendMessage(CHAT_ID, "Lights on!!", "");
+   i = 1;
+   //boolean old = on;
     }
-    else{
-      bot.sendMessage(CHAT_ID, "Lights out!!", "");
+    if((resistance<15.00) && i ==1){
+      bot.sendMessage(CHAT_ID, "Lights off!!", "");
+   i = 2;
       }
+  Serial.println(i);    
   delay(1000);
 }
